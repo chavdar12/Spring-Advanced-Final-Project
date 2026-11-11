@@ -1,0 +1,31 @@
+<mat-toolbar class="toolbar">
+  <a class="brand" mat-button routerLink="/home">Trade<b>Zone</b></a>
+  <span class="spacer"></span>
+  <nav>
+    <a mat-button routerLink="/home" routerLinkActive="active">Home</a>
+    @if (session.loggedIn()) {
+      <a mat-button routerLink="/advertisements" routerLinkActive="active">Advertisements</a>
+      <a mat-button routerLink="/regions" routerLinkActive="active">Regions</a>
+      <a mat-button routerLink="/user/profile" routerLinkActive="active">Profile</a>
+      @if (session.isAdmin()) {
+        <a mat-button routerLink="/user/admin" routerLinkActive="active">Admin</a>
+      }
+      <button (click)="logout()" mat-button>
+        <mat-icon>logout</mat-icon>
+        Logout
+      </button>
+    } @else {
+      <a mat-button routerLink="/auth/signin" routerLinkActive="active">Login</a>
+      <a mat-flat-button routerLink="/auth/signup">Sign up</a>
+    }
+  </nav>
+</mat-toolbar>
+<div class="progress">
+  @if (loading.active()) {
+    <mat-progress-bar mode="indeterminate" />
+  }
+</div>
+<main>
+  <router-outlet />
+</main>
+<footer>TradeZone © {{ year }}</footer>

@@ -1,0 +1,12 @@
+# normalize line endings in the repo
+* text=auto eol=lf
+
+# Windows scripts keep CRLF
+*.bat text eol=crlf
+
+# binary assets: never touch line endings or try to diff
+*.jar binary
+*.ico binary
+*.png binary
+*.jpg binary
+*.gif binary

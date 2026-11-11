@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>New category</h2>
+<mat-dialog-content>
+  <form [formRoot]="form" class="content" id="category-form">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input [formField]="form.name" matInput />
+      <mat-error>{{ form.name().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <label>
+      Image
+      <input (change)="pick($event)" accept="image/png,image/jpeg" type="file" />
+    </label>
+    @if (category().image) {
+      <img [src]="category().image" alt="Preview" />
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    [disabled]="form().invalid() || form().submitting()"
+    form="category-form"
+    mat-flat-button
+    type="submit"
+  >
+    Create
+  </button>
+</mat-dialog-actions>

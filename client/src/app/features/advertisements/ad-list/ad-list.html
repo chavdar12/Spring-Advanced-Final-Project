@@ -1,0 +1,114 @@
+<h1>Advertisements</h1>
+<mat-chip-listbox
+  (change)="selectCategory($event.value)"
+  [value]="category()"
+  aria-label="Category"
+>
+  <mat-chip-option value="All">All</mat-chip-option>
+  @for (category of categories(); track category.id) {
+    <mat-chip-option [value]="category.name">
+      <img [src]="category.photoUrl" alt="" matChipAvatar />{{ category.name }}
+    </mat-chip-option>
+  }
+</mat-chip-listbox>
+
+<div class="filters">
+  <mat-form-field class="grow">
+    <mat-label>Search by title</mat-label>
+    <!-- "change" fires on enter or blur, so typing doesn't query on every key -->
+    <input
+      #searchBox
+      (change)="search.set(searchBox.value)"
+      (keydown.enter)="searchBox.blur()"
+      [value]="search()"
+      matInput
+    />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Condition</mat-label>
+    <mat-select (valueChange)="condition.set($event)" [value]="condition()">
+      <mat-option value="All">All</mat-option>
+      @for (condition of conditions(); track condition) {
+        <mat-option [value]="condition">{{ condition }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field>
+    <mat-label>Sort by</mat-label>
+    <mat-select (valueChange)="sortBy.set($event)" [value]="sortBy()">
+      <mat-option value="none">Newest</mat-option>
+      <mat-option value="price">Price</mat-option>
+      <mat-option value="views">Views</mat-option>
+      <mat-option value="title">Title</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-button-toggle-group
+    (change)="order.set($event.value)"
+    [value]="order()"
+    aria-label="Sort order"
+  >
+    <mat-button-toggle aria-label="Ascending" value="ASC">
+      <mat-icon>arrow_upward</mat-icon>
+    </mat-button-toggle>
+    <mat-button-toggle aria-label="Descending" value="DESC">
+      <mat-icon>arrow_downward</mat-icon>
+    </mat-button-toggle>
+  </mat-button-toggle-group>
+  <div class="price">
+    <span>Price {{ min() }}–{{ max() }}$</span>
+    <mat-slider discrete max="10000" min="0" step="50">
+      <input
+        (valueChange)="min.set($event)"
+        [value]="min()"
+        aria-label="Minimum price"
+        matSliderStartThumb
+      />
+      <input
+        (valueChange)="max.set($event)"
+        [value]="max()"
+        aria-label="Maximum price"
+        matSliderEndThumb
+      />
+    </mat-slider>
+  </div>
+</div>
+
+<div class="actions">
+  @if (profileCompleted()) {
+    <button (click)="create()" mat-flat-button>
+      <mat-icon>add</mat-icon>
+      New advertisement
+    </button>
+  } @else {
+    <a mat-stroked-button routerLink="/user/profile">
+      Complete your profile to create advertisements
+    </a>
+  }
+  @if (session.isModerator()) {
+    <button (click)="newCategory()" mat-stroked-button>
+      <mat-icon>category</mat-icon>
+      New category
+    </button>
+  }
+  <span class="total">{{ found().total }} results</span>
+</div>
+
+<section class="card-grid">
+  @for (ad of found().content; track ad.id) {
+    <app-ad-card (edit)="edit($event)" (remove)="remove($event)" [ad]="ad" />
+  } @empty {
+    @if (!results.isLoading()) {
+      <p class="empty">No advertisements match your filters.</p>
+    }
+  }
+</section>
+
+<mat-paginator
+  (page)="onPage($event)"
+  [hidePageSize]="true"
+  [length]="found().total"
+  [pageIndex]="page() - 1"
+  [pageSize]="pageSize"
+  aria-label="Pages"
+/>

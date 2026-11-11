@@ -1,0 +1,42 @@
+<mat-card class="auth-card">
+  <mat-card-header>
+    <mat-card-title><h1>Registration</h1></mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formRoot]="form">
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input [formField]="form.username" autocomplete="username" matInput />
+        <mat-hint>3–12 lowercase letters or digits, starting with a letter</mat-hint>
+        <mat-error>{{ form.username().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input [formField]="form.email" autocomplete="email" matInput type="email" />
+        <mat-error>{{ form.email().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input [formField]="form.password" autocomplete="new-password" matInput type="password" />
+        <mat-error>{{ form.password().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Repeat password</mat-label>
+        <input
+          [formField]="form.confirmPassword"
+          autocomplete="new-password"
+          matInput
+          type="password"
+        />
+        <mat-error>{{ form.confirmPassword().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+      }
+      <button [disabled]="form().invalid() || form().submitting()" mat-flat-button type="submit">
+        Create account
+      </button>
+    </form>
+  </mat-card-content>
+  <mat-card-actions>Have an account? <a routerLink="/auth/signin">Log in</a></mat-card-actions>
+</mat-card>

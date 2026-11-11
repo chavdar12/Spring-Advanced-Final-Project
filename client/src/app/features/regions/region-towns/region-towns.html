@@ -1,0 +1,13 @@
+<mat-list>
+  @if (towns.isLoading()) {
+    <mat-list-item>Loading…</mat-list-item>
+  } @else if (towns.error()) {
+    <mat-list-item>Towns could not be loaded.</mat-list-item>
+  } @else {
+    @for (town of towns.value(); track town.id) {
+      <mat-list-item>{{ town.name }} ({{ town.advertisementsCount }})</mat-list-item>
+    } @empty {
+      <mat-list-item>No towns.</mat-list-item>
+    }
+  }
+</mat-list>

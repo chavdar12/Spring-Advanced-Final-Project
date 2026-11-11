@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/build
+**/.gradle
+**/.angular
+client/test-results
+client/playwright-report
+.git
+.idea
+.env

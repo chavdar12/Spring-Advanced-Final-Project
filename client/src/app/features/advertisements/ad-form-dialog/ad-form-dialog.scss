@@ -1,0 +1,34 @@
+form {
+  display: flex;
+  flex-direction: column;
+  min-width: min(480px, 80vw);
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  > * {
+    flex: 1;
+  }
+}
+
+.upload {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  img {
+    width: 96px;
+    height: 72px;
+    object-fit: cover;
+  }
+}

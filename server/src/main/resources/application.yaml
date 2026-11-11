@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: trade-zone
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/trade_zone}
+    username: ${DB_USERNAME:trade_zone}
+    password: ${DB_PASSWORD:trade_zone}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    # services map entities to DTOs inside their transactions
+    open-in-view: false
+    properties:
+      hibernate.default_batch_fetch_size: 50
+  flyway:
+    locations: classpath:db/migration
+  # Redis: response cache + idempotency keys
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cache:
+    type: redis
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+app:
+  idempotency:
+    ttl: 24h
+  jwt:
+    # HS512 needs >= 64 bytes; override JWT_SECRET outside local development
+    secret: ${JWT_SECRET:local-dev-only-jwt-secret-change-me-local-dev-only-jwt-secret-change-me}
+    expiration: 86400
+
+cloudinary:
+  cloud-name: ${CLOUDINARY_CLOUD_NAME:}
+  api-key: ${CLOUDINARY_API_KEY:}
+  api-secret: ${CLOUDINARY_API_SECRET:}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true

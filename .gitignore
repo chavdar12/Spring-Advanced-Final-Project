@@ -1,0 +1,45 @@
+### Gradle ###
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+### Java ###
+*.class
+*.log
+hs_err_pid*
+replay_pid*
+
+### Node / Angular ###
+node_modules/
+dist/
+.angular/
+coverage/
+test-results/
+playwright-report/
+
+### IntelliJ IDEA ###
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+### Eclipse / VS Code ###
+.classpath
+.project
+.settings/
+bin/
+.vscode/
+
+### Local config / secrets ###
+.env
+!.env.example
+*.local.properties
+application-local.*
+compose.override.yaml
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+._*

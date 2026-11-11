@@ -1,0 +1,37 @@
+{
+  "index_patterns": [
+    "trade-zone-*"
+  ],
+  "template": {
+    "settings": {
+      "number_of_replicas": 0
+    },
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "strings": {
+            "match_mapping_type": "string",
+            "mapping": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        }
+      ],
+      "properties": {
+        "message": {
+          "type": "text"
+        },
+        "status": {
+          "type": "short"
+        },
+        "request_time": {
+          "type": "float"
+        },
+        "bytes": {
+          "type": "long"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.grow {
+  flex: 1 1 240px;
+}
+
+.price {
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin: 8px 0 16px;
+}
+
+.total {
+  margin-left: auto;
+  color: var(--mat-sys-on-surface-variant);
+}
+
+.empty {
+  grid-column: 1 / -1;
+  text-align: center;
+}

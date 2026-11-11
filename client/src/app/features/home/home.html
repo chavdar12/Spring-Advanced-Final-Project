@@ -1,0 +1,27 @@
+@if (session.loggedIn()) {
+  @for (category of categories(); track category.name) {
+    <h2>Top {{ category.name }}</h2>
+    <section class="card-grid">
+      @for (ad of category.advertisements; track ad.id) {
+        <app-ad-card [ad]="ad" />
+      }
+    </section>
+  } @empty {
+    @if (!top.isLoading()) {
+      <section class="hero">
+        <h1>No advertisements yet</h1>
+        <a mat-flat-button routerLink="/advertisements">Create the first one</a>
+      </section>
+    }
+  }
+} @else {
+  <section class="hero">
+    <h1>Here you will find <em>all types of advertisements</em></h1>
+    <ol>
+      <li>Join our family.</li>
+      <li>Search in millions of advertisements.</li>
+      <li>Publish your advertisements.</li>
+    </ol>
+    <a mat-flat-button routerLink="/auth/signup">Get started</a>
+  </section>
+}

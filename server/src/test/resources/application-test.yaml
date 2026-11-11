@@ -1,0 +1,10 @@
+# overrides on top of application.yaml; datasource and redis come from Testcontainers (@ServiceConnection)
+cloudinary:
+  cloud-name: test
+  api-key: test
+  api-secret: test
+
+app:
+  jwt:
+    secret: "test-jwt-secret-test-jwt-secret-test-jwt-secret-test-jwt-secret-!!"
+    expiration: 86400
