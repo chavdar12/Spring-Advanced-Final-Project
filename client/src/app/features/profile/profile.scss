@@ -1,0 +1,23 @@
+.overview {
+  margin-top: 16px;
+  max-width: 640px;
+}
+
+.upload {
+  cursor: pointer;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  padding-top: 16px;
+}
+
+.tab-content {
+  padding-top: 16px;
+}
+
+.warn {
+  color: var(--mat-sys-error);
+}

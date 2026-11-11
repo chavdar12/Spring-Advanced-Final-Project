@@ -1,0 +1,92 @@
+@if (advertisement.hasValue()) {
+  @let ad = advertisement.value();
+  <div class="layout">
+    <section class="gallery">
+      <img [alt]="ad.title" [src]="selected()?.url ?? placeholder" class="main" />
+      <div class="thumbs">
+        @for (image of ad.images; track image.id) {
+          <button
+            (click)="selectedId.set(image.id)"
+            [attr.aria-label]="'Show image ' + ($index + 1)"
+            [class.active]="image.id === selected()?.id"
+            class="thumb"
+          >
+            <img [src]="image.url" alt="" />
+          </button>
+        }
+      </div>
+      @if (mine()) {
+        <div class="owner-actions">
+          <label class="upload" mat-stroked-button>
+            <mat-icon>add_photo_alternate</mat-icon>
+            Add images
+            <input
+              (change)="upload($event)"
+              accept="image/png,image/jpeg"
+              hidden
+              multiple
+              type="file"
+            />
+          </label>
+          @if (selected(); as image) {
+            <button (click)="deletePhoto(image.id)" mat-stroked-button>
+              <mat-icon>delete</mat-icon>
+              Delete this image
+            </button>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="info">
+      <h1>{{ ad.title }}</h1>
+      <p class="price">{{ ad.price | currency }}</p>
+      <mat-chip-set>
+        <mat-chip>
+          <mat-icon matChipAvatar>build</mat-icon>
+          {{ ad.condition }}
+        </mat-chip>
+        <mat-chip>
+          <mat-icon matChipAvatar>local_shipping</mat-icon>
+          {{ ad.delivery }}
+        </mat-chip>
+        <mat-chip>
+          <mat-icon matChipAvatar>visibility</mat-icon>
+          {{ ad.views }} views
+        </mat-chip>
+      </mat-chip-set>
+      <p>
+        <a [routerLink]="['/advertisements/category', ad.categoryName]">
+          Category: {{ ad.categoryName }}
+        </a>
+      </p>
+      <p class="description">{{ ad.description }}</p>
+      <p class="muted">Published {{ ad.createdOn | date: 'medium' }}</p>
+
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <img [src]="ad.seller.photoUrl" alt="" mat-card-avatar />
+          <mat-card-title>{{ ad.seller.firstName }} {{ ad.seller.lastName }}</mat-card-title>
+          <mat-card-subtitle>Seller</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ ad.seller.aboutMe }}</p>
+        </mat-card-content>
+      </mat-card>
+    </section>
+  </div>
+
+  <h2>More from {{ ad.seller.firstName }}</h2>
+  <section class="card-grid">
+    @for (other of more(); track other.id) {
+      <app-ad-card [ad]="other" />
+    } @empty {
+      <p>Nothing else yet.</p>
+    }
+  </section>
+  @if (hasMore()) {
+    <button (click)="loadMore()" mat-button>Load more</button>
+  }
+} @else if (advertisement.error()) {
+  <p role="alert">This advertisement could not be loaded.</p>
+}

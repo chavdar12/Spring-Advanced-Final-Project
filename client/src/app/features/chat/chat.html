@@ -1,0 +1,50 @@
+<div class="chat">
+  <aside>
+    <mat-form-field class="search" subscriptSizing="dynamic">
+      <mat-label>Find people</mat-label>
+      <input #filterBox (input)="filter.set(filterBox.value)" [value]="filter()" matInput />
+    </mat-form-field>
+    <mat-selection-list [multiple]="false" aria-label="Conversations">
+      @for (user of visibleUsers(); track user.username) {
+        <mat-list-option (click)="open(user)" [selected]="user.username === peer()?.username">
+          <span
+            [matBadge]="unread()[user.username] || null"
+            matBadgeOverlap="false"
+            matListItemTitle
+          >
+            {{ user.firstName }} {{ user.lastName }}
+          </span>
+          <span matListItemLine>{{ user.connected ? 'online' : 'offline' }}</span>
+        </mat-list-option>
+      } @empty {
+        <p class="hint">
+          No one to talk to yet. People appear here once their profile is complete.
+        </p>
+      }
+    </mat-selection-list>
+  </aside>
+  <section class="conversation">
+    @if (peer(); as peer) {
+      <h3>{{ peer.firstName }} {{ peer.lastName }}</h3>
+      <div #scroller aria-live="polite" class="messages">
+        @for (message of messages(); track $index) {
+          <div [class.mine]="message.sender === me" class="message">
+            <p>{{ message.content }}</p>
+            <small>{{ message.timestamp | date: 'short' }}</small>
+          </div>
+        }
+      </div>
+      <form [formRoot]="draftForm" class="compose">
+        <mat-form-field subscriptSizing="dynamic">
+          <mat-label>Message</mat-label>
+          <input [formField]="draftForm.content" autocomplete="off" matInput />
+        </mat-form-field>
+        <button [disabled]="draftForm().invalid()" aria-label="Send" mat-icon-button type="submit">
+          <mat-icon>send</mat-icon>
+        </button>
+      </form>
+    } @else {
+      <p class="hint">Pick someone to start chatting.</p>
+    }
+  </section>
+</div>

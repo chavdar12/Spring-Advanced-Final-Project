@@ -1,0 +1,145 @@
+@if (loaded(); as profile) {
+  <mat-tab-group (selectedIndexChange)="tab.set($event)" [selectedIndex]="tab()" dynamicHeight>
+    <mat-tab label="Profile">
+      <mat-card appearance="outlined" class="overview">
+        <mat-card-header>
+          <img [src]="profile.photoUrl || placeholderAvatar" alt="" mat-card-avatar />
+          <mat-card-title>
+            {{ profile.firstName ?? profile.username }} {{ profile.lastName ?? '' }}
+          </mat-card-title>
+          <mat-card-subtitle>{{ profile.email }} · {{ topRole() }}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          @if (!profile.completed) {
+            <p class="warn">
+              Add your name, town and a profile picture to start publishing and chatting.
+            </p>
+          }
+          <p>{{ profile.aboutMe }}</p>
+          @if (profile.town; as town) {
+            <p>{{ town.name }}, {{ town.regionName }}</p>
+          }
+        </mat-card-content>
+        <mat-card-actions>
+          <label class="upload" mat-stroked-button>
+            <mat-icon>photo_camera</mat-icon>
+            Change picture
+            <input
+              (change)="uploadPicture($event)"
+              accept="image/png,image/jpeg"
+              hidden
+              type="file"
+            />
+          </label>
+        </mat-card-actions>
+      </mat-card>
+    </mat-tab>
+
+    <mat-tab label="Edit info">
+      <form [formRoot]="infoForm" class="form">
+        <mat-form-field>
+          <mat-label>First name</mat-label>
+          <input [formField]="infoForm.firstName" matInput />
+          <mat-error>{{ infoForm.firstName().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Last name</mat-label>
+          <input [formField]="infoForm.lastName" matInput />
+          <mat-error>{{ infoForm.lastName().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Town</mat-label>
+          <mat-select [formField]="infoForm.townId">
+            @for (town of towns(); track town.id) {
+              <mat-option [value]="town.id">{{ town.name }} ({{ town.regionName }})</mat-option>
+            }
+          </mat-select>
+          <mat-error>{{ infoForm.townId().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>About me</mat-label>
+          <textarea [formField]="infoForm.aboutMe" matInput rows="3"></textarea>
+          <mat-error>{{ infoForm.aboutMe().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <button
+          [disabled]="infoForm().invalid() || infoForm().submitting()"
+          mat-flat-button
+          type="submit"
+        >
+          Save
+        </button>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="Password">
+      <form [formRoot]="passwordForm" class="form">
+        <mat-form-field>
+          <mat-label>Current password</mat-label>
+          <input
+            [formField]="passwordForm.oldPassword"
+            autocomplete="current-password"
+            matInput
+            type="password"
+          />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>New password</mat-label>
+          <input
+            [formField]="passwordForm.newPassword"
+            autocomplete="new-password"
+            matInput
+            type="password"
+          />
+          <mat-error>{{ passwordForm.newPassword().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Repeat new password</mat-label>
+          <input
+            [formField]="passwordForm.confirmPassword"
+            autocomplete="new-password"
+            matInput
+            type="password"
+          />
+          <mat-error>{{ passwordForm.confirmPassword().errors()[0]?.message }}</mat-error>
+        </mat-form-field>
+        <button
+          [disabled]="passwordForm().invalid() || passwordForm().submitting()"
+          mat-flat-button
+          type="submit"
+        >
+          Change password
+        </button>
+      </form>
+    </mat-tab>
+
+    <mat-tab label="My advertisements ({{ profile.createdAdvertisements.length }})">
+      <section class="card-grid tab-content">
+        @for (ad of profile.createdAdvertisements; track ad.id) {
+          <app-ad-card (edit)="editAd($event)" (remove)="deleteAd($event)" [ad]="ad" />
+        } @empty {
+          <p>You have not published anything yet.</p>
+        }
+      </section>
+    </mat-tab>
+
+    <mat-tab label="Favorites ({{ profile.favorites.length }})">
+      <section class="card-grid tab-content">
+        @for (ad of profile.favorites; track ad.id) {
+          <app-ad-card [ad]="ad" />
+        } @empty {
+          <p>No favorites yet.</p>
+        }
+      </section>
+    </mat-tab>
+
+    <mat-tab label="Messages">
+      <ng-template matTabContent>
+        @if (profile.completed) {
+          <app-chat />
+        } @else {
+          <p class="warn">Complete your profile to chat.</p>
+        }
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+}

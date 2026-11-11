@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>{{ id ? 'Edit' : 'Create' }} advertisement</h2>
+<mat-dialog-content>
+  <form [formRoot]="form" id="ad-form">
+    <mat-form-field>
+      <mat-label>Title</mat-label>
+      <input [formField]="form.title" matInput />
+      <mat-error>{{ form.title().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Description</mat-label>
+      <textarea [formField]="form.description" matInput rows="3"></textarea>
+      <mat-error>{{ form.description().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Price</mat-label>
+      <input [formField]="form.price" matInput type="number" />
+      <span matTextPrefix>$&nbsp;</span>
+      <mat-error>{{ form.price().errors()[0]?.message }}</mat-error>
+    </mat-form-field>
+    <div class="row">
+      <mat-form-field>
+        <mat-label>Condition</mat-label>
+        <mat-select [formField]="form.condition">
+          @for (condition of conditions(); track condition) {
+            <mat-option [value]="condition">{{ condition }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Delivery</mat-label>
+        <mat-select [formField]="form.delivery">
+          @for (delivery of deliveries(); track delivery) {
+            <mat-option [value]="delivery">{{ delivery }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <mat-form-field>
+      <mat-label>Category</mat-label>
+      <mat-select [formField]="form.categoryId">
+        @for (category of categories(); track category.id) {
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    @if (!id) {
+      <label class="upload">
+        <span>Images</span>
+        <input (change)="pick($event)" accept="image/png,image/jpeg" multiple type="file" />
+      </label>
+      <div class="previews">
+        @for (image of images(); track $index) {
+          <img [src]="image" alt="Preview" />
+        }
+      </div>
+    }
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    [disabled]="form().invalid() || form().submitting() || (!id && images().length === 0)"
+    form="ad-form"
+    mat-flat-button
+    type="submit"
+  >
+    Save
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,33 @@
+<mat-card class="auth-card">
+  <mat-card-header>
+    <mat-card-title><h1>Login</h1></mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form [formRoot]="form">
+      <mat-form-field>
+        <mat-label>Username</mat-label>
+        <input [formField]="form.username" autocomplete="username" matInput />
+        <mat-error>{{ form.username().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input
+          [formField]="form.password"
+          autocomplete="current-password"
+          matInput
+          type="password"
+        />
+        <mat-error>{{ form.password().errors()[0]?.message }}</mat-error>
+      </mat-form-field>
+      @if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+      }
+      <button [disabled]="form().invalid() || form().submitting()" mat-flat-button type="submit">
+        Login
+      </button>
+    </form>
+  </mat-card-content>
+  <mat-card-actions
+    >Don't have an account? <a routerLink="/auth/signup">Sign up</a></mat-card-actions
+  >
+</mat-card>

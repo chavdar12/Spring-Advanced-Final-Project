@@ -1,0 +1,134 @@
+# docker compose up --build   →   http://localhost:8080
+name: trade-zone
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_DB: trade_zone
+      POSTGRES_USER: trade_zone
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U trade_zone -d trade_zone" ]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:8-alpine
+    command: [ "redis-server", "--save", "", "--maxmemory", "256mb", "--maxmemory-policy", "volatile-lru" ]
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      retries: 10
+    restart: unless-stopped
+
+  server:
+    build: server
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/trade_zone
+      DB_USERNAME: trade_zone
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env (at least 64 characters)}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:-}
+      SERVER_FORWARD_HEADERS_STRATEGY: framework
+      # ECS JSON on stdout, shipped to Logstash by the gelf driver
+      LOGGING_STRUCTURED_FORMAT_CONSOLE: ecs
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      logstash: { condition: service_healthy }
+    logging:
+      driver: gelf
+      options:
+        # resolved by the Docker daemon, outside the compose network, hence the published port
+        # (host.docker.internal works on Docker Desktop; on a Linux host set GELF_HOST=localhost).
+        # TCP so bursts are not dropped; non-blocking so the app never waits on Logstash
+        gelf-address: tcp://${GELF_HOST:-host.docker.internal}:12201
+        mode: non-blocking
+        max-buffer-size: 8m
+        tag: server
+    restart: unless-stopped
+
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "${GATEWAY_PORT:-8080}:80"
+    environment:
+      KIBANA_USER: ${KIBANA_USER:-admin}
+      KIBANA_PASSWORD: ${KIBANA_PASSWORD:?set KIBANA_PASSWORD in .env}
+    depends_on:
+      server: { condition: service_healthy }
+    logging:
+      driver: gelf
+      options:
+        gelf-address: tcp://${GELF_HOST:-host.docker.internal}:12201
+        mode: non-blocking
+        max-buffer-size: 8m
+        tag: gateway
+    restart: unless-stopped
+
+  # ELK: logs and the usage dashboard at http://localhost:8080/kibana/
+  elasticsearch:
+    image: elasticsearch:9.5.5
+    environment:
+      discovery.type: single-node
+      # only reachable inside the compose network; Kibana is exposed through the gateway's basic auth
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: -Xms512m -Xmx512m
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health" ]
+      interval: 10s
+      retries: 30
+    restart: unless-stopped
+
+  logstash:
+    image: logstash:9.5.5
+    environment:
+      LS_JAVA_OPTS: -Xms256m -Xmx256m
+      XPACK_MONITORING_ENABLED: "false"
+    volumes:
+      - ./elk/logstash/pipeline.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    ports:
+      - "127.0.0.1:12201:12201"
+    depends_on:
+      elasticsearch: { condition: service_healthy }
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -fs http://localhost:9600/_node/pipelines/main" ]
+      interval: 10s
+      retries: 30
+    restart: unless-stopped
+
+  kibana:
+    image: kibana:9.5.5
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+      SERVER_BASEPATH: /kibana
+      SERVER_REWRITEBASEPATH: "true"
+      TELEMETRY_OPTIN: "false"
+    depends_on:
+      elasticsearch: { condition: service_healthy }
+    restart: unless-stopped
+
+  elk-setup:
+    image: curlimages/curl:8.23.0
+    entrypoint: [ "/setup/setup.sh" ]
+    volumes:
+      - ./elk/setup:/setup:ro
+    depends_on:
+      elasticsearch: { condition: service_healthy }
+      kibana: { condition: service_started }
+    restart: "no"
+
+volumes:
+  pgdata:
+  esdata:

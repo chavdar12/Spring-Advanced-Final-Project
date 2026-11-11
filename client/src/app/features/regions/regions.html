@@ -1,0 +1,21 @@
+<h1>Regions</h1>
+@if (regions.hasValue()) {
+  <mat-accordion multi>
+    @for (region of regions.value(); track region.name) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ region.name }}</mat-panel-title>
+          <mat-panel-description>
+            {{ region.totalAds }} ads · {{ region.totalUsers }} users
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <!-- lazy content: the towns load the first time the panel opens -->
+        <ng-template matExpansionPanelContent>
+          <app-region-towns [region]="region.name" />
+        </ng-template>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+} @else if (regions.error()) {
+  <p role="alert">Regions could not be loaded.</p>
+}

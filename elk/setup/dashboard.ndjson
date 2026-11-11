@@ -1,0 +1,74 @@
+{
+  "type": "index-pattern",
+  "id": "trade-zone",
+  "attributes": {
+    "title": "trade-zone-*",
+    "name": "Trade Zone logs",
+    "timeFieldName": "@timestamp"
+  },
+  "references": []
+}
+{
+  "type": "dashboard",
+  "id": "trade-zone-usage",
+  "attributes": {
+    "title": "Trade Zone usage",
+    "description": "API traffic from the nginx gateway and server log levels",
+    "panelsJSON": "[{\"type\": \"lens\", \"panelIndex\": \"p1\", \"gridData\": {\"x\": 0, \"y\": 0, \"w\": 12, \"h\": 7, \"i\": \"p1\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"API requests\", \"visualizationType\": \"lnsMetric\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"c\"], \"columns\": {\"c\": {\"label\": \"API requests\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}}}}}}, \"visualization\": {\"layerId\": \"l1\", \"layerType\": \"data\", \"metricAccessor\": \"c\"}, \"query\": {\"query\": \"tag : \\\"gateway\\\" and uri : /api*\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p2\", \"gridData\": {\"x\": 12, \"y\": 0, \"w\": 12, \"h\": 7, \"i\": \"p2\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"Active users\", \"visualizationType\": \"lnsMetric\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"c\"], \"columns\": {\"c\": {\"label\": \"Active users\", \"dataType\": \"number\", \"operationType\": \"unique_count\", \"sourceField\": \"user\", \"isBucketed\": false, \"scale\": \"ratio\", \"customLabel\": true}}}}}}, \"visualization\": {\"layerId\": \"l1\", \"layerType\": \"data\", \"metricAccessor\": \"c\"}, \"query\": {\"query\": \"tag : \\\"gateway\\\" and uri : /api*\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p3\", \"gridData\": {\"x\": 24, \"y\": 0, \"w\": 12, \"h\": 7, \"i\": \"p3\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"Server errors (5xx)\", \"visualizationType\": \"lnsMetric\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"c\"], \"columns\": {\"c\": {\"label\": \"Server errors (5xx)\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}}}}}}, \"visualization\": {\"layerId\": \"l1\", \"layerType\": \"data\", \"metricAccessor\": \"c\"}, \"query\": {\"query\": \"tag : \\\"gateway\\\" and uri : /api* and status >= 500\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p4\", \"gridData\": {\"x\": 36, \"y\": 0, \"w\": 12, \"h\": 7, \"i\": \"p4\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"Server ERROR logs\", \"visualizationType\": \"lnsMetric\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"c\"], \"columns\": {\"c\": {\"label\": \"Server ERROR logs\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}}}}}}, \"visualization\": {\"layerId\": \"l1\", \"layerType\": \"data\", \"metricAccessor\": \"c\"}, \"query\": {\"query\": \"tag : \\\"server\\\" and log.level : \\\"ERROR\\\"\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p5\", \"gridData\": {\"x\": 0, \"y\": 7, \"w\": 24, \"h\": 14, \"i\": \"p5\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"API requests by status\", \"visualizationType\": \"lnsXY\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"s\", \"x\", \"y\"], \"columns\": {\"x\": {\"label\": \"@timestamp\", \"dataType\": \"date\", \"operationType\": \"date_histogram\", \"sourceField\": \"@timestamp\", \"isBucketed\": true, \"scale\": \"interval\", \"params\": {\"interval\": \"auto\"}}, \"s\": {\"label\": \"Status\", \"dataType\": \"number\", \"operationType\": \"terms\", \"sourceField\": \"status\", \"isBucketed\": true, \"scale\": \"ordinal\", \"params\": {\"size\": 6, \"orderBy\": {\"type\": \"column\", \"columnId\": \"y\"}, \"orderDirection\": \"desc\"}, \"customLabel\": true}, \"y\": {\"label\": \"Count\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}}}}}}, \"visualization\": {\"legend\": {\"isVisible\": true, \"position\": \"right\"}, \"preferredSeriesType\": \"bar_stacked\", \"layers\": [{\"layerId\": \"l1\", \"layerType\": \"data\", \"seriesType\": \"bar_stacked\", \"xAccessor\": \"x\", \"accessors\": [\"y\"], \"splitAccessor\": \"s\"}]}, \"query\": {\"query\": \"tag : \\\"gateway\\\" and uri : /api*\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p6\", \"gridData\": {\"x\": 24, \"y\": 7, \"w\": 24, \"h\": 14, \"i\": \"p6\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"Server logs by level\", \"visualizationType\": \"lnsXY\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"s\", \"x\", \"y\"], \"columns\": {\"x\": {\"label\": \"@timestamp\", \"dataType\": \"date\", \"operationType\": \"date_histogram\", \"sourceField\": \"@timestamp\", \"isBucketed\": true, \"scale\": \"interval\", \"params\": {\"interval\": \"auto\"}}, \"s\": {\"label\": \"Level\", \"dataType\": \"string\", \"operationType\": \"terms\", \"sourceField\": \"log.level\", \"isBucketed\": true, \"scale\": \"ordinal\", \"params\": {\"size\": 5, \"orderBy\": {\"type\": \"column\", \"columnId\": \"y\"}, \"orderDirection\": \"desc\"}, \"customLabel\": true}, \"y\": {\"label\": \"Count\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}}}}}}, \"visualization\": {\"legend\": {\"isVisible\": true, \"position\": \"right\"}, \"preferredSeriesType\": \"bar_stacked\", \"layers\": [{\"layerId\": \"l1\", \"layerType\": \"data\", \"seriesType\": \"bar_stacked\", \"xAccessor\": \"x\", \"accessors\": [\"y\"], \"splitAccessor\": \"s\"}]}, \"query\": {\"query\": \"tag : \\\"server\\\"\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p7\", \"gridData\": {\"x\": 0, \"y\": 21, \"w\": 24, \"h\": 15, \"i\": \"p7\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"Busiest endpoints\", \"visualizationType\": \"lnsDatatable\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"u\", \"n\", \"t\"], \"columns\": {\"u\": {\"label\": \"Endpoint\", \"dataType\": \"string\", \"operationType\": \"terms\", \"sourceField\": \"uri\", \"isBucketed\": true, \"scale\": \"ordinal\", \"params\": {\"size\": 15, \"orderBy\": {\"type\": \"column\", \"columnId\": \"n\"}, \"orderDirection\": \"desc\"}, \"customLabel\": true}, \"n\": {\"label\": \"Requests\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}, \"t\": {\"label\": \"Avg response (s)\", \"dataType\": \"number\", \"operationType\": \"average\", \"sourceField\": \"request_time\", \"isBucketed\": false, \"scale\": \"ratio\", \"customLabel\": true}}}}}}, \"visualization\": {\"layerId\": \"l1\", \"layerType\": \"data\", \"columns\": [{\"columnId\": \"u\"}, {\"columnId\": \"n\"}, {\"columnId\": \"t\"}]}, \"query\": {\"query\": \"tag : \\\"gateway\\\" and uri : /api*\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}, {\"type\": \"lens\", \"panelIndex\": \"p8\", \"gridData\": {\"x\": 24, \"y\": 21, \"w\": 24, \"h\": 15, \"i\": \"p8\"}, \"embeddableConfig\": {\"attributes\": {\"title\": \"Most active users\", \"visualizationType\": \"lnsDatatable\", \"references\": [{\"type\": \"index-pattern\", \"id\": \"trade-zone\", \"name\": \"indexpattern-datasource-layer-l1\"}], \"state\": {\"datasourceStates\": {\"formBased\": {\"layers\": {\"l1\": {\"columnOrder\": [\"u\", \"n\"], \"columns\": {\"u\": {\"label\": \"User\", \"dataType\": \"string\", \"operationType\": \"terms\", \"sourceField\": \"user\", \"isBucketed\": true, \"scale\": \"ordinal\", \"params\": {\"size\": 15, \"orderBy\": {\"type\": \"column\", \"columnId\": \"n\"}, \"orderDirection\": \"desc\"}, \"customLabel\": true}, \"n\": {\"label\": \"Requests\", \"dataType\": \"number\", \"operationType\": \"count\", \"isBucketed\": false, \"scale\": \"ratio\", \"sourceField\": \"___records___\", \"customLabel\": true}}}}}}, \"visualization\": {\"layerId\": \"l1\", \"layerType\": \"data\", \"columns\": [{\"columnId\": \"u\"}, {\"columnId\": \"n\"}]}, \"query\": {\"query\": \"tag : \\\"gateway\\\" and uri : /api* and user : *\", \"language\": \"kuery\"}, \"filters\": []}}, \"enhancements\": {}}}]",
+    "optionsJSON": "{\"useMargins\": true, \"syncColors\": true, \"hidePanelTitles\": false}",
+    "timeRestore": true,
+    "timeFrom": "now-24h",
+    "timeTo": "now",
+    "refreshInterval": {
+      "pause": false,
+      "value": 30000
+    },
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\": {\"query\": \"\", \"language\": \"kuery\"}, \"filter\": []}"
+    }
+  },
+  "references": [
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p1:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p2:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p3:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p4:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p5:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p6:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p7:indexpattern-datasource-layer-l1"
+    },
+    {
+      "type": "index-pattern",
+      "id": "trade-zone",
+      "name": "p8:indexpattern-datasource-layer-l1"
+    }
+  ],
+  "typeMigrationVersion": "10.3.0",
+  "coreMigrationVersion": "8.8.0"
+}
