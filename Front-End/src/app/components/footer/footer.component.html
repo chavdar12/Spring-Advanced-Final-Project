@@ -1,0 +1,14 @@
+<footer class="footer-distributed">
+
+  <div class="footer-left">
+
+    <h3>Trade<span>Zone</span></h3>
+    <p class="footer-links">
+      <a href="#" routerLink="/home" class="link-1">Home</a>
+      <a [routerLink]="isAuthenticated() ? ['/regions'] : ['/auth/signin']">Regions</a>
+    </p>
+
+    <p class="footer-company-name">TradeZone ©2021</p>
+  </div>
+
+</footer>

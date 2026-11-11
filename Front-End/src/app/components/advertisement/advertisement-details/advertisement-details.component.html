@@ -1,0 +1,186 @@
+<div #top class="row">
+  <div id="carouselExampleIndicators" class="carousel slide carousel-fade w-75" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li *ngFor="let img of advertisement?.images; let i = index" data-target="#carouselExampleIndicators"
+          [attr.data-slide-to]="i" [ngClass]="i === 0 ? 'active' : ''"></li>
+    </ol>
+    <div *ngIf="isOwnedByUser;else withoutButton" class="carousel-inner text-center">
+      <div *ngIf="hasNoImages" class="image-container">
+        <div class='carousel-item active'>
+          <img class="d-block w-100 carousel-image" style="width: 500px; "
+               data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide" alt="addImage"
+               src="{{defaultImageUrl}} " data-holder-rendered="true">
+        </div>
+      </div>
+      <app-image-delete-modal [advertisementId]="advertisement?.id"
+                              [photoId]="photoToDeleteId"></app-image-delete-modal>
+      <div *ngFor="let img of advertisement?.images; let i = index"
+           [ngClass]="i == 0 ? 'carousel-item active' : 'carousel-item'">
+        <div class="image-container">
+          <img class="d-block w-100 carousel-image"
+               data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide" alt="addImage"
+               src="{{img.url}}" data-holder-rendered="true">
+          <div class="overlay"></div>
+          <div class="img-button"><a (click)="changePhotoToDeleteId(img.id)" data-toggle="modal"
+                                     data-target="#deletePhotoModal" href="#"> DELETE </a></div>
+        </div>
+      </div>
+    </div>
+    <ng-template #withoutButton>
+      <div class="carousel-inner text-center">
+        <div *ngIf="hasNoImages" class="image-container">
+          <div class='carousel-item active'>
+            <img class="d-block w-100 carousel-image" style="width: 500px; "
+                 data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide " alt="addImage "
+                 src="{{defaultImageUrl}} " data-holder-rendered="true ">
+          </div>
+        </div>
+        <div class="image-container ">
+          <div *ngFor="let img of advertisement?.images; let i=index "
+               [ngClass]="i==0 ? 'carousel-item active' : 'carousel-item' ">
+            <img class="d-block w-100 carousel-image" style="width: 500px; "
+                 data-src="holder.js/800x400?auto=yes&amp;bg=777&amp;fg=555&amp;text=First slide " alt="addImage "
+                 src="{{img.url}} " data-holder-rendered="true ">
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon " aria-hidden="true "></span>
+      <span class="sr-only ">Previous</span>
+    </a>
+    <a class="carousel-control-next " href="#carouselExampleIndicators" role="button" data-slide="next">
+      <span class="carousel-control-next-icon " aria-hidden="true "></span>
+      <span class="sr-only ">Next</span>
+    </a>
+  </div>
+  <div class="col">
+    <mat-card>
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image">
+          <img src="{{advertisement?.creator?.photoUrl}}" class="avatar" alt="creatorAvatar">
+        </div>
+        <mat-card-title>{{advertisement?.creator?.firstName}} {{advertisement?.creator?.lastName}}</mat-card-title>
+        <mat-card-subtitle>Creator</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>
+          {{advertisement?.creator?.aboutMe}}
+        </p>
+        <hr class="my-3">
+      </mat-card-content>
+      <mat-card-actions class="text-center">
+        <div *ngIf="isOwnedByUser;else notOwned" class="col">
+          <app-image-upload-modal [advertisementId]="advertisement?.id"></app-image-upload-modal>
+        </div>
+        <ng-template #notOwned>
+          <div class="row d-flex justify-content-center">
+            <div id="container">
+              <button class="learn-more">
+                              <span class="circle" aria-hidden="true">
+                                <span class="icon arrow"></span>
+                              </span>
+                <span (click)="scrollTo(moreAds)" class="button-text">Learn More</span>
+              </button>
+            </div>
+          </div>
+        </ng-template>
+      </mat-card-actions>
+    </mat-card>
+    <div class="row mt-2">
+      <mat-card class="ml-3" style="width: 16rem;height: 12rem;">
+        <mat-list>
+          <mat-list-item>
+            <img matListAvatar src="{{conditionImageUlr}}" alt="conditionImage">
+            <h3 matLine>Condition:</h3>
+            <p matLine>
+              <span>{{advertisement?.condition}}</span>
+            </p>
+          </mat-list-item>
+          <mat-list-item>
+            <img matListAvatar src="{{deliveryImageUrl}}" alt="deliveryImage">
+            <h3 matLine>Delivery:</h3>
+            <p matLine>
+              <span>{{advertisement?.delivery}}</span>
+            </p>
+          </mat-list-item>
+        </mat-list>
+      </mat-card>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="jumbotron container-fluid mt-3">
+    <div class="row">
+      <div class="col">
+        <h1>{{advertisement?.title}}</h1>
+      </div>
+      <div class="col">
+        <mat-toolbar>
+          <div class="row ml-5">
+            <div class="col ml-5">
+              <a class="ml-5" [routerLink]="['/advertisements/category',advertisement.categoryName]">
+                Category - {{advertisement?.categoryName}}
+              </a>
+            </div>
+          </div>
+        </mat-toolbar>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <h2>{{advertisement?.price | currency}}</h2>
+      </div>
+    </div>
+    <hr class="my-2">
+    <h3>Description</h3>
+    <p class="lead">{{advertisement?.description}} Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque,
+      officiis temporibus dignissimos sint incidunt consequatur, accusamus ad eius architecto corrupti obcaecati quia
+      eligendi nihil iste quibusdam aliquam
+      autem dolore! Quibusdam.
+    </p>
+    <hr class="my-2">
+    <div class="row">
+      <div class="col-md-6">
+                <span class="badge badge-pill purple ">
+                    <i class="fas fa-users fa-2x " aria-hidden="true "></i> Views: {{advertisement?.views}}
+                </span>
+      </div>
+      <div class="col-md-6">
+                <span>
+                    Published:
+                  {{advertisement?.createdOn | date : 'medium'}}
+                </span>
+      </div>
+    </div>
+  </div>
+</div>
+<div #moreAds class="row justify-content-center">
+  <div class="container my-4">
+    <h1 class="text-center">Other most viewed from {{advertisement.creator.firstName}}</h1>
+    <hr class="my-4">
+    <div class="row d-flex justify-content-center ">
+      <div *ngFor="let add of advertisementsCreatedByUser" class="col-md-4">
+        <div class="card mb-2">
+          <img class="card-img-top" src="{{add.imageUrl}}" style="width: 350px;height: 200px;" alt="Card image cap">
+          <div class="card-body">
+            <h4 class="card-title">{{add.title}}</h4>
+            <p class="card-text">Views : {{add.views}}</p>
+            <a [routerLink]="['/advertisements/details',add.id]" class="btn btn-primary"
+               (click)="reloadData(add.id,top)">Details</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="container">
+        <button class="learn-more">
+                  <span class="circle" aria-hidden="true">
+                    <span class="icon arrow"></span>
+                  </span>
+          <span class="button-text" (click)="loadMore()">Load more</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,39 @@
+<div class="modal fade right" id="fullHeightModalRight" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-full-height modal-right" role="document">
+    <div class="modal-content">
+      <app-conversation-modal [username]="username" [receiver]="receiver"></app-conversation-modal>
+      <div class="card mb-sm-3 mb-md-0 contacts_card">
+        <div class="card-header">
+          <div class="input-group">
+            <input type="text" [(ngModel)]="searchedUser" placeholder="Search..."
+                   (keyup)="$event.keyCode == 13 ? searchUser() : null" name="" class="form-control search">
+            <div class="input-group-prepend">
+              <span (click)="searchUser()" class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="card-body contacts_body">
+          <ul class="contacts">
+            <li data-toggle="modal" data-target="#chatModal" *ngFor="let user of getOtherUsers()"
+                [ngClass]="getUserItemClass(user)" (click)="startChatWithUser(user)">
+              <div class="d-flex bd-highlight">
+                <div class="img_cont">
+                  <img src="{{user.photoUrl}}" class="rounded-circle user_img">
+                  <span class="online_icon" [ngClass]="user.connected ? '':'offline'"></span>
+                </div>
+                <div class="user_info">
+                  <span>{{user.firstName}} {{user.lastName}}</span>
+                  <p>{{user.connected ? 'Online' : 'Offline'}}</p>
+                </div>
+              </div>
+            </li>
+            <li *ngIf="getOtherUsers().length === 0">
+              <h2 class="text-center">No results</h2>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
