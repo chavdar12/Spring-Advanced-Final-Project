@@ -2,16 +2,10 @@ import {provideHttpClient} from '@angular/common/http';
 import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
 import {TestBed} from '@angular/core/testing';
 import {Session} from '../../core/session/session';
-import {Chat} from './chat';
+import {Client} from '@stomp/stompjs';
+import {Chat, STOMP_CLIENT} from './chat';
 
-const stomp = vi.hoisted(() => ({activate: vi.fn(), deactivate: vi.fn(), connected: false}));
-vi.mock('@stomp/stompjs', () => ({
-  Client: class {
-    activate = stomp.activate;
-    deactivate = stomp.deactivate;
-    connected = stomp.connected;
-  },
-}));
+const stomp = {activate: vi.fn(), deactivate: vi.fn(), connected: false};
 
 describe('Chat', () => {
   // jsdom has no layout, so no scrolling
@@ -19,7 +13,13 @@ describe('Chat', () => {
 
   it('lists people, opens the shared channel and marks it read', async () => {
     sessionStorage.clear();
-    TestBed.configureTestingModule({providers: [provideHttpClient(), provideHttpClientTesting()]});
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {provide: STOMP_CLIENT, useValue: () => stomp as unknown as Client},
+      ],
+    });
     TestBed.inject(Session).signIn({token: 't', username: 'maria', roles: []});
     const http = TestBed.inject(HttpTestingController);
     const fixture = TestBed.createComponent(Chat);

@@ -1,6 +1,7 @@
 import {DatePipe} from '@angular/common';
 import {
   Component,
+  InjectionToken,
   computed,
   DestroyRef,
   effect,
@@ -17,12 +18,18 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatIconModule} from '@angular/material/icon';
 import {MatInputModule} from '@angular/material/input';
 import {MatListModule} from '@angular/material/list';
-import {Client, IMessage} from '@stomp/stompjs';
+import {Client, IMessage, StompConfig} from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import {Notify} from '../../core/notify/notify';
 import {Session} from '../../core/session/session';
 import {ChatApi} from './chat-api';
 import {channelId, ChatMessage, ChatUser} from './chat-message';
+
+/** Creates the STOMP client; a token so tests can provide a fake instead of a real WebSocket. */
+export const STOMP_CLIENT = new InjectionToken<(config: StompConfig) => Client>('STOMP_CLIENT', {
+  providedIn: 'root',
+  factory: () => (config) => new Client(config),
+});
 
 @Component({
   selector: 'app-chat',
@@ -74,7 +81,7 @@ export class Chat {
   );
   private readonly scroller = viewChild<ElementRef<HTMLElement>>('scroller');
   private readonly listening = new Set<string>();
-  private readonly stomp = new Client({
+  private readonly stomp = inject(STOMP_CLIENT)({
     webSocketFactory: () => new SockJS('/wechat'),
     connectHeaders: {Authorization: `Bearer ${this.session.token()}`},
     reconnectDelay: 5000,
