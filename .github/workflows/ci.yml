@@ -45,7 +45,7 @@ jobs:
         working-directory: client
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
@@ -71,7 +71,7 @@ jobs:
             "$(openssl rand -hex 16)" "$(openssl rand -base64 64 | tr -d '\n')" "$(openssl rand -hex 12)" > .env
           # the gateway and what it depends on (incl. Logstash/Elasticsearch for logging); Kibana is not needed
           docker compose up --build -d --wait gateway
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
